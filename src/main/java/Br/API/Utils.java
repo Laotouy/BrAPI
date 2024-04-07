@@ -300,7 +300,7 @@ public abstract class Utils {
     }
 
     public static void safeDropItem(Player p, ItemStack is) {
-        if (is == null) {
+        if (is == null || is.getType() == Material.AIR) {
             return;
         }
         if (is.getAmount() > 64) {

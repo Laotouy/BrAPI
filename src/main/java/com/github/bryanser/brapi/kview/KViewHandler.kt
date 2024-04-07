@@ -128,6 +128,9 @@ object KViewHandler : Listener {
         clickLimit -= p.name
         val view = context.kView
         view.onClose(context)
+        Bukkit.getScheduler().runTask(Main.getPlugin()) {
+			p.updateInventory()
+        }
     }
 
 
