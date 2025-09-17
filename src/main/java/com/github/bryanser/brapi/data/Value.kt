@@ -2,7 +2,6 @@ package com.github.bryanser.brapi.data
 
 interface Value<T> {
     fun getValue(): T
-    @JvmDefault
     operator fun invoke(): T = getValue()
 }
 

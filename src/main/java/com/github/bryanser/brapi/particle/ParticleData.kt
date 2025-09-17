@@ -12,7 +12,6 @@ import org.bukkit.inventory.ItemStack
 import org.bukkit.util.Vector
 
 interface ParticleData {
-    @JvmDefault
     fun getData():Any? = null
 
     fun write(packet: PacketContainer, type: ParticleType? = null)

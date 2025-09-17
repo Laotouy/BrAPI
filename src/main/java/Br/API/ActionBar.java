@@ -25,11 +25,7 @@ public class ActionBar {
         } catch (Throwable e) {
             pc.getBytes().write(0, (byte) 2);
         }
-        try {
-            pm.sendServerPacket(p, pc);
-        } catch (InvocationTargetException ex) {
-            Logger.getLogger(ActionBar.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        pm.sendServerPacket(p, pc);
     }
 
 }

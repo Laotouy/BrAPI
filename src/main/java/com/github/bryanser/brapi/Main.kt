@@ -3,8 +3,6 @@ package com.github.bryanser.brapi
 import Br.API.EventListener
 import Br.API.Main.*
 import com.github.bryanser.brapi.kview.KViewHandler
-import com.github.bryanser.brapi.test.TestManager
-import com.github.bryanser.brapi.vview.VViewHandler
 import org.bukkit.Bukkit
 import org.bukkit.ChatColor
 import org.bukkit.command.Command
@@ -47,11 +45,7 @@ class Main : JavaPlugin() {
         makeKotlinLoader()
         PLGUIN = this
         compOld()
-        ScriptManager.checkClass()
-        TestManager.init()
         KViewHandler.init()
-        ScriptManager.loadScript()
-        VViewHandler.init()
     }
 
     override fun onDisable() {
@@ -91,30 +85,10 @@ class Main : JavaPlugin() {
                 return true
             }
             if (args[1].equals("reload", true)) {
-                ScriptManager.loadScript()
                 sender.sendMessage("§6重载成功")
                 return true
             }
             sender.sendMessage("§6/$label script reload >> 重载所有脚本")
-            return true
-        }
-        if (args[0].equals("test", true) && args.size > 1 && sender.isOp) {
-            TestManager.init()
-            if (!TestManager.enable) {
-                return true
-            }
-            val test = TestManager.tests[args[1]]
-            if (test == null) {
-                sender.sendMessage("§c找不到名为${args[1]}的测试脚本")
-                return true
-            }
-            val sargs = if (args.size <= 2) arrayOf() else args.copyOfRange(2, args.size)
-            val r = test.test(sender, *sargs)
-            if (r.isEmpty()) {
-                sender.sendMessage("§6测试脚本执行成功")
-            } else {
-                sender.sendMessage("§c测试脚本执行失败: $r")
-            }
             return true
         }
         return true

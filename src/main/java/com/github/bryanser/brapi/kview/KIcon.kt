@@ -2,7 +2,6 @@ package com.github.bryanser.brapi.kview
 
 import org.bukkit.event.inventory.ClickType
 import org.bukkit.inventory.ItemStack
-import kotlin.jvm.JvmDefault
 
 interface KIcon<C : KViewContext> {
     /*
@@ -51,7 +50,6 @@ interface KIcon<C : KViewContext> {
      * @param context UI的上下文
      * @return 返回true时将取消点击事件
      */
-    @JvmDefault
     fun cancelClickEvent(context: C): Boolean {
         return true
     }

@@ -51,11 +51,7 @@ public class SignUtils {
         PacketContainer pc = new PacketContainer(PacketType.Play.Server.OPEN_SIGN_EDITOR);
         Location loc = p.getLocation();
         pc.getBlockPositionModifier().write(0, new BlockPosition(loc.getBlockX(), loc.getBlockY() + 1, loc.getBlockZ()));
-        try {
-            pm.sendServerPacket(p, pc, false);
-        } catch (InvocationTargetException ex) {
-            Logger.getLogger(SignUtils.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        pm.sendServerPacket(p, pc, false);
     }
 
     private static Map<String, Map.Entry<String, BiConsumer<Player, String>>> Callbacks = new HashMap<>();

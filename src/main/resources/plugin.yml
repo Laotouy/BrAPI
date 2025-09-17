@@ -3,7 +3,7 @@ author: Bryan_lzh
 authors: ['Bryan_lzh','DarkBlade12']
 main: com.github.bryanser.brapi.Main
 description: '开发者QQ:390807154'
-api-version: 1.12
+api-version: 1.16
 softdepend: [KotlinExt,Vault,VexView,PlaceholderAPI,TabooLib]
 loadbefore: [OpenInv]
 version: ${project.version}

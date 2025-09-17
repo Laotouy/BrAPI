@@ -6,7 +6,6 @@
  */
 package Br.API.Data;
 
-import Br.API.Scripts.ScriptLoader;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -26,7 +25,6 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.script.ScriptException;
-import jdk.nashorn.api.scripting.NashornScriptEngine;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.Plugin;
 
@@ -94,94 +92,6 @@ public interface ProxyUtil {
         list.add(cls);
     }
 
-    public static void proxy(Plugin plugin) {
-        List<Class<? extends ProxyUtil>> list = Proxied.get(plugin.getName());
-        if (list == null) {
-            return;
-        }
-        File folder = new File(plugin.getDataFolder(), File.separator + "Proxy" + File.separator);
-        if (!folder.exists()) {
-            folder.mkdirs();
-        }
-        for (Class<? extends ProxyUtil> cls : list) {
-            if (!cls.isAnnotationPresent(ProxyInfo.class)) {
-                continue;
-            }
-            ProxyInfo pi = cls.getAnnotation(ProxyInfo.class);
-            File file = Util.getFile(folder, pi.value());
-            YamlConfiguration config;
-            if (!file.exists()) {
-                config = new YamlConfiguration();
-            } else {
-                config = YamlConfiguration.loadConfiguration(file);
-            }
-            String[] patharr = pi.value().split("\\.");
-            String root = patharr[patharr.length - 1];
-            boolean edit = false;
-            for (Field f : Util.getAllDeclaredFields(cls)) {
-                if (!Modifier.isStatic(f.getModifiers())) {
-                    continue;
-                }
-                f.setAccessible(true);
-                if (f.isAnnotationPresent(ProxyScript.class)) {
-                    if (!ProxiedScript.class.isAssignableFrom(f.getType())) {
-                        continue;
-                    }
-                    ProxyScript ps = f.getAnnotation(ProxyScript.class);
-                    File jsFile = Util.getJsFile(folder, ps.file());
-                    if (!jsFile.exists()) {
-                        try {
-                            Util.OutputFile(plugin, ps.fromJarFile(), jsFile);
-                        } catch (IOException ex) {
-                            Logger.getLogger(ProxyUtil.class.getName()).log(Level.SEVERE, null, ex);
-                        }
-                    }
-                    ProxiedScript pds = new ProxiedScript() {
-                        private String Function = ps.function();
-                        private NashornScriptEngine Engine = ScriptLoader.evalAsUTF8(plugin, jsFile);
-
-                        @Override
-                        public Object proxy(Object... args) {
-                            try {
-                                return Engine.invokeFunction(Function, args);
-                            } catch (ScriptException | NoSuchMethodException ex) {
-                                Logger.getLogger(ProxyUtil.class.getName()).log(Level.SEVERE, null, ex);
-                            }
-                            return null;
-                        }
-                    };
-                    try {
-                        f.set(pds, null);
-                    } catch (IllegalArgumentException | IllegalAccessException ex) {
-                        Logger.getLogger(ProxyUtil.class.getName()).log(Level.SEVERE, null, ex);
-                    }
-                    continue;
-                }
-                if (!f.isAnnotationPresent(Proxy.class)) {
-                    continue;
-                }
-                Proxy p = f.getAnnotation(Proxy.class);
-                String path = root + '.' + (p.value().isEmpty() ? f.getName() : p.value());
-                try {
-                    if (config.contains(path)) {
-                        f.set(config.get(path), null);
-                    } else {
-                        config.set(path, f.get(null));
-                        edit = true;
-                    }
-                } catch (IllegalArgumentException | IllegalAccessException ex) {
-                    Logger.getLogger(ProxyUtil.class.getName()).log(Level.SEVERE, null, ex);
-                }
-            }
-            if (edit) {
-                try {
-                    config.save(file);
-                } catch (IOException ex) {
-                    Logger.getLogger(ProxyUtil.class.getName()).log(Level.SEVERE, null, ex);
-                }
-            }
-        }
-    }
 
     static class Util {
 
